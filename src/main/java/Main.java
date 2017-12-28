@@ -23,4 +23,26 @@ public class Main {
         System.out.println(retMsg.obj.verifyCode);
         System.out.println();
     }
+
+    public static String getSendBase64(String user, String pwd, int isForceLogin) throws IOException {
+        HttpSendPara httpSendPara = new HttpSendPara();
+        httpSendPara.methodName = "login";
+        httpSendPara.interfaceClassName = "com.newland.mbop.business.ILoginMgmt";
+        httpSendPara.paraList = new Object[1];
+        LoginPara loginPara = new LoginPara();
+        loginPara.isForceLogin = isForceLogin;
+        loginPara.msisdn = user;
+        loginPara.password = pwd;
+        httpSendPara.paraList[0] = loginPara;
+        httpSendPara.parameterTypes = new Class[1];
+        httpSendPara.parameterTypes[0] = LoginPara.class;
+        httpSendPara.returnType = RetMsg.class;
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        ObjectOutputStream objectOutputStream = new ObjectOutputStream(byteArrayOutputStream);
+        objectOutputStream.writeObject(httpSendPara);
+        objectOutputStream.flush();
+        byte[] bytes = byteArrayOutputStream.toByteArray();
+        bytes = Base64.getEncoder().encode(bytes);
+        return new String(bytes, "UTF-8");
+    }
 }
